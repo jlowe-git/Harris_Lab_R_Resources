@@ -1,0 +1,236 @@
+---
+title: "Harris Lab R Training Module"
+author: "Jeremy Lowe"
+date: "5/27/2021"
+output: 
+  html_document: 
+    toc: yes
+    toc_float: yes
+    number_sections: yes
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+<center>
+![Image credit: Allison Horst](C:/Users/jerem/Desktop/Harris Research/_Lab_Photos_JL/horst_rstudio_air.png)
+</center>
+
+***
+# Introduction
+
+This training module was created for the Harris Lab to aid in developing publication-ready figures, tables, and more. It assumes you have a basic knowledge of R including importing data, 'tidying' it, and basic analyses. It is by no means meant to reinvent the wheel when it comes to more detailed trainings (like the ones found in [the R for Data Science textbook](https://r4ds.had.co.nz/index.html).) More general resources for the lab can also be found in the [Harris Lab R Resources document](https://docs.google.com/document/d/1F6vYfGr8zeFSx2Wo0bD8fEipSpl7VPpqFNFkbbOOw6I/edit#heading=h.ft1w0w4x8r7h).
+
+For this small module, we will be using data from the *Iris* dataset, which is included in the Tidyverse package. The dataset actually contains data from a study conducted in 1936 by Ronald Fisher, so if you are interested in learning more, you can view it [here](https://onlinelibrary.wiley.com/doi/epdf/10.1111/j.1469-1809.1936.tb02137.x). It contains measurements from three different irises that characterizes different dimensions for each. The code chunk below demonstrates how to load the data and other relevant packages into the environment.
+
+  &nbsp;
+
+```{r Importing Packages and Datasets, echo=TRUE, message=FALSE, warning=FALSE}
+
+#Loading in relevant packages, some of these will be used later
+library(tidyverse)
+library(table1)
+library(kableExtra)
+
+
+#Loading data into the environment
+#You will likely use the read_csv() function in Tidyverse to load other datasets.
+data(iris)
+
+#Take a peek at the data to see what we're working with!
+head(iris)
+
+
+```
+
+  &nbsp;
+
+
+***
+# R Markdown
+
+R Markdown is a literate programming file within RStudio that can take advantage of html formatting and more to produce amazing tables, visualizations, dashboards, and more. This tutorial relies on packages that make use of the html formatting in R Markdown, so it is recommended you use an R Markdown file when following along. More information on R Markdown can be found within [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) of the R for Data Science textbook linked in the previous section. Once you are comfortable with the functions of R Markdown and have an R Markdown file created, you can continue on.
+
+<center>
+***
+# Tables
+</center>
+
+For any data analysis, being able to calculate descriptive statistics and represent them in a table is a must. This section will walk you through the [Table1](https://benjaminrich.github.io/table1/vignettes/table1-examples.html) package, a useful tool in representing descriptive statistics across several variables, as well as [Kable](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#Installation), included in the [Knitr](https://yihui.org/knitr/) package, which offers abilities to transform dataframes/tibbles into well-formatted and meaningful tables. Just to reiterate, you should be working within an R Markdown file to create an html output; regular R source files will not do the trick. 
+
+First, with our *Iris* dataset, we're interested to learn about some of the measures of central tendency (mean, median, standard deviation, etc.) of the provided data. We have variables representing the sepal length and width, petal length and width, and the species of Iris. The image below gives you an idea of the data we're looking at.
+
+  &nbsp;
+  
+<center>
+![](C:/Users/jerem/Desktop/Harris Research/_Lab_Photos_JL/iris_sepal_petal.png)
+
+</center>
+
+  &nbsp;
+  
+## Table1
+  
+To get a quick view at descriptive statistics, we'll use the following code and the Table1 package. 
+
+
+```{r Descriptive Statistics of Iris data, echo=TRUE, fig.align='center', highlight=TRUE, tidy='styler'}
+
+#First, I need to ensure my variables are the right data type. 
+str(iris)
+
+#Based on the str() function above, I see I have 4 numeric variables and 1 factor variable, which is exactly what I need.
+
+#Often, categorical data is represented as a character data type, but table1 prefers factor data types
+#To change characters to factors, I could use the following code:
+#iris$Species <- factor(iris$Species)
+
+
+
+
+#Creating basic table using table1 function
+#Note: The variables I'm interested in are included in a 'formula' input:
+#~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+#All variables you want to calculate descriptive stats for are used in the table1() function this way
+table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width + Species, data = iris)
+
+
+
+
+
+```
+
+
+  &nbsp;
+
+Looks good! However, there are many more ways to customize the table1 output. For one, to gain some more meaningful insights, I could stratify my numerical data over the 3 species of Irises. Let's say I am also interested in making this more publication ready, which means I need to change how my variable names appear in the table. Doing so would use the following code:
+
+  &nbsp;
+  
+```{r Descriptive Statistics of Iris Data pt 2, echo = TRUE, fig.align='center'}
+
+#Adjusting the display of variable names
+label(iris$Sepal.Length) <- "Sepal Length"
+label(iris$Sepal.Width) <- "Sepal Width"
+label(iris$Petal.Length) <- "Petal Length"
+label(iris$Petal.Width) <- "Petal Width"
+
+#Adjusting factor display names for each species
+iris$Species <- fct_recode(iris$Species,
+                           "Setosa" = "setosa",
+                           "Versicolor" = "versicolor",
+                           "Virginica" = "virginica")
+
+
+#table1 output stratified by Iris species
+table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width | Species, data = iris)
+
+```
+
+
+  &nbsp;
+  
+Nice! We can begin to see some of the differences across the different types of species and the table looks great. What I've shown here just scratches the surface of [Table1](https://benjaminrich.github.io/table1/vignettes/table1-examples.html), and I recommend checking out the documentation to see more of what it is capable of.
+
+  &nbsp;
+  
+## Kable
+
+The kbl() function is included in the knitr package and provides the ability to transform dataframes/tibbles into html formatted tables. It is perfect for developing tables that are easily readable for publications, presentations, reports, etc.
+
+Say we want to represent the descriptive statistics again, but this time using kbl(). To do so, we could use the following code:
+
+```{r Creating kable representation of descriptive statistics, echo=TRUE, fig.align='center'}
+
+#Creating descriptive statistics
+iris_kable <- group_by(iris, Species) %>%
+  summarise(
+    Count = n(),
+    "Sepal Width Mean" = mean(Sepal.Width, na.rm = TRUE),
+    "Sepal Width SD" = sd(Sepal.Width, na.rm = TRUE),
+    "Petal Width Mean" = mean(Petal.Width, na.rm = TRUE),
+    "Petal Width SD" = sd(Petal.Width, na.rm = TRUE),
+    "Sepal Length Mean" = mean(Sepal.Length, na.rm = TRUE),
+    "Sepal Length SD" = sd(Sepal.Length, na.rm = TRUE),
+    "Petal Length Mean" = mean(Petal.Length, na.rm = TRUE),
+    "Petal Length SD" = sd(Petal.Length, na.rm = TRUE),
+  )
+
+#Representing in a Kable
+iris_kable%>%
+  kbl()%>%
+  add_header_above(c("Descriptive Statistics of Iris Species (N = 150)" = 10))%>%
+  kable_styling(bootstrap_options = c("striped","condensed"), full_width = F, font_size = 12)
+
+
+
+#Also do a contingency table
+
+
+
+```
+
+
+
+# Data Visualization with ggplot2
+
+R offers countless ways to create unique data visualizations. 
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+# Bivariate Data Analysis
+
+
+Now say we are interested in determining if there is a difference in size of the sepal among different species. To do so, we will be using a one-way ANOVA. More information on how to choose the right statistical test can be found [here](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/). The additional key assumptions for a one-way ANOVA are that the samples are independent of each other and randomly chosen, and that the dependent variable (in our case, sepal width or height) is normally distributed. At a basic level, a histogram can allow us to 'eyeball' it, but there are more rigorous statistical tests out there to determine normality. See the code below for how to create a basic histogram using the ggplot2 package:
+
+```{r Checking for normality of iris data, echo=TRUE, fig.align='center'}
+
+#Creating histogram of sepal width variable
+#We will review ggplot2 later on, so do not worry too much about this code yet.
+plot_1 <- iris%>%
+  ggplot() +
+  geom_histogram(aes(y = Sepal.Width), binwidth = 0.1) +
+  coord_flip() +
+  labs(title = "Sepal Width",
+       y = "Sepal Width (cm)",
+       x = "Frequency") + 
+  theme_bw()
+
+plot_1
+
+  
+
+
+```
+
+
+  &nbsp;
+  
+As we can see, the data are fairly normally distributed, so we can feel more confident about using the one-way ANOVA to compare sepal width across species. Upon obtaining results though, we will want to represent them in a formatted table using the power of Kable so it can be shared to an audience. See the following code for how to do so:
+
+```{r Conducting one-way ANOVA, echo=TRUE, fig.align='center'}
+
+#Conducting one-way ANOVA and storing model for later formatting
+
+anova_results <- aov(data = iris, Sepal.Width ~ Species)
+
+#The summary() function creates a crude output
+summary(anova_results)
+
+
+
+```
+
