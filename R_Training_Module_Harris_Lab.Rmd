@@ -29,20 +29,18 @@ For this small module, we will be using data from the *Iris* dataset, which is i
 
 ```{r Importing Packages and Datasets, echo=TRUE, message=FALSE, warning=FALSE}
 
-#Loading in relevant packages, some of these will be used later
+# Loading in relevant packages, some of these will be used later
 library(tidyverse)
 library(table1)
 library(kableExtra)
 
 
-#Loading data into the environment
-#You will likely use the read_csv() function in Tidyverse to load other datasets.
+# Loading data into the environment
+# You will likely use the read_csv() function in Tidyverse to load other datasets.
 data(iris)
 
-#Take a peek at the data to see what we're working with!
+# Take a peek at the data to see what we're working with!
 head(iris)
-
-
 ```
 
   &nbsp;
@@ -78,28 +76,23 @@ To get a quick view at descriptive statistics, we'll use the following code and 
 
 ```{r Descriptive Statistics of Iris data, echo=TRUE, fig.align='center', highlight=TRUE, tidy='styler'}
 
-#First, I need to ensure my variables are the right data type. 
+# First, I need to ensure my variables are the right data type.
 str(iris)
 
-#Based on the str() function above, I see I have 4 numeric variables and 1 factor variable, which is exactly what I need.
+# Based on the str() function above, I see I have 4 numeric variables and 1 factor variable, which is exactly what I need.
 
-#Often, categorical data is represented as a character data type, but table1 prefers factor data types
-#To change characters to factors, I could use the following code:
-#iris$Species <- factor(iris$Species)
-
-
+# Often, categorical data is represented as a character data type, but table1 prefers factor data types
+# To change characters to factors, I could use the following code:
+# iris$Species <- factor(iris$Species)
 
 
-#Creating basic table using table1 function
-#Note: The variables I'm interested in are included in a 'formula' input:
-#~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
-#All variables you want to calculate descriptive stats for are used in the table1() function this way
+
+
+# Creating basic table using table1 function
+# Note: The variables I'm interested in are included in a 'formula' input:
+# ~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width
+# All variables you want to calculate descriptive stats for are used in the table1() function this way
 table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width + Species, data = iris)
-
-
-
-
-
 ```
 
 
@@ -111,22 +104,22 @@ Looks good! However, there are many more ways to customize the table1 output. Fo
   
 ```{r Descriptive Statistics of Iris Data pt 2, echo = TRUE, fig.align='center'}
 
-#Adjusting the display of variable names
+# Adjusting the display of variable names
 label(iris$Sepal.Length) <- "Sepal Length"
 label(iris$Sepal.Width) <- "Sepal Width"
 label(iris$Petal.Length) <- "Petal Length"
 label(iris$Petal.Width) <- "Petal Width"
 
-#Adjusting factor display names for each species
+# Adjusting factor display names for each species
 iris$Species <- fct_recode(iris$Species,
-                           "Setosa" = "setosa",
-                           "Versicolor" = "versicolor",
-                           "Virginica" = "virginica")
+  "Setosa" = "setosa",
+  "Versicolor" = "versicolor",
+  "Virginica" = "virginica"
+)
 
 
-#table1 output stratified by Iris species
+# table1 output stratified by Iris species
 table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width | Species, data = iris)
-
 ```
 
 
@@ -144,7 +137,7 @@ Say we want to represent the descriptive statistics again, but this time using k
 
 ```{r Creating kable representation of descriptive statistics, echo=TRUE, fig.align='center'}
 
-#Creating descriptive statistics
+# Creating descriptive statistics
 iris_kable <- group_by(iris, Species) %>%
   summarise(
     Count = n(),
@@ -158,18 +151,15 @@ iris_kable <- group_by(iris, Species) %>%
     "Petal Length SD" = sd(Petal.Length, na.rm = TRUE),
   )
 
-#Representing in a Kable
-iris_kable%>%
-  kbl()%>%
-  add_header_above(c("Descriptive Statistics of Iris Species (N = 150)" = 10))%>%
-  kable_styling(bootstrap_options = c("striped","condensed"), full_width = F, font_size = 12)
+# Representing in a Kable
+iris_kable %>%
+  kbl() %>%
+  add_header_above(c("Descriptive Statistics of Iris Species (N = 150)" = 10)) %>%
+  kable_styling(bootstrap_options = c("striped", "condensed"), full_width = F, font_size = 12)
 
 
 
-#Also do a contingency table
-
-
-
+# Also do a contingency table
 ```
 
 
@@ -198,22 +188,20 @@ Now say we are interested in determining if there is a difference in size of the
 
 ```{r Checking for normality of iris data, echo=TRUE, fig.align='center'}
 
-#Creating histogram of sepal width variable
-#We will review ggplot2 later on, so do not worry too much about this code yet.
-plot_1 <- iris%>%
+# Creating histogram of sepal width variable
+# We will review ggplot2 later on, so do not worry too much about this code yet.
+plot_1 <- iris %>%
   ggplot() +
   geom_histogram(aes(y = Sepal.Width), binwidth = 0.1) +
   coord_flip() +
-  labs(title = "Sepal Width",
-       y = "Sepal Width (cm)",
-       x = "Frequency") + 
+  labs(
+    title = "Sepal Width",
+    y = "Sepal Width (cm)",
+    x = "Frequency"
+  ) +
   theme_bw()
 
 plot_1
-
-  
-
-
 ```
 
 
@@ -223,14 +211,10 @@ As we can see, the data are fairly normally distributed, so we can feel more con
 
 ```{r Conducting one-way ANOVA, echo=TRUE, fig.align='center'}
 
-#Conducting one-way ANOVA and storing model for later formatting
+# Conducting one-way ANOVA and storing model for later formatting
 
 anova_results <- aov(data = iris, Sepal.Width ~ Species)
 
-#The summary() function creates a crude output
+# The summary() function creates a crude output
 summary(anova_results)
-
-
-
 ```
-
