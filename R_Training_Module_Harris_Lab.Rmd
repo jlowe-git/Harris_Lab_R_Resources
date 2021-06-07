@@ -2,17 +2,14 @@
 title: "Harris Lab R Training Module"
 author: "Jeremy Lowe"
 date: "6/7/2021"
-output: 
-  html_document: 
+output:
+  html_document:
     toc: yes
     toc_float: yes
     number_sections: yes
   github_document:
     toc: yes
-    toc_float: yes
     number_sections: yes
-  editor_options:
-    chunk_output_type: console
     
 ---
 
