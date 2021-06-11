@@ -77,11 +77,78 @@ head(iris)
 
 
 ***
+
+  &nbsp;
+
 # R Markdown
 
-R Markdown is a literate programming file within RStudio that can take advantage of html formatting and more to produce amazing tables, visualizations, dashboards, reports, and more. It was used to create the document you are viewing right now as well! This tutorial relies on packages that make use of the html formatting in R Markdown, so it is recommended you use an R Markdown file when following along. More information on R Markdown can be found within [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) of the R for Data Science textbook linked in the previous section. Once you are comfortable with the functions of R Markdown and have an R Markdown file created, you can continue on.
+R Markdown is a literate programming file within RStudio that can take advantage of html formatting and more to produce amazing tables, visualizations, dashboards, reports, and more. It was used to create the document you are viewing right now as well! This tutorial relies on packages that make use of the html formatting in R Markdown, so it is recommended you use an R Markdown file when following along. A helpful tutorial on R Markdown can be found within [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) of the R for Data Science textbook linked in the previous section, but I will also walk through the basics in this section.
+
+
+First, you will open an R Markdown file in the same manner you would a typical R source file in R Studio; simply go to File -> New File -> R Markdown. You will see the following prompt open:
+
+<center>
+![R Markdown New File Prompt](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/rmarkdown1.PNG)
+
+</center>
+
+  &nbsp;
+
+On this page, you will see that you have the option to create an output in either html, pdf, or doc files types. For our purposes, we will be using the html output. If you have a need for another output version, there are helpful resources in [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) of the R for Data Science textbook!
+
+After opening the new R Markdown file, you will notice the file is already populated with some code and text. This is the standard R Markdown template. You can delete everything I have highlighted below so your file looks relatively bare except for the header and chunk settings.
+
+  &nbsp;
+
+
+<center>
+![](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/rmarkdown2.PNG)
+
+  &nbsp;
+You can delete the highlighted portion to be left with:
+  &nbsp;
+
+![](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/rmarkdown3.PNG)
+
+</center>
+
+  &nbsp;
+
+Perfect! Now let's walk through the structure of an R Markdown file...
+
+  &nbsp;
+<center>
+![](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/rmarkdown5.PNG)
+</center>
+
+  &nbsp;
+  
+First, the YAML (Yes Another Markdown Language) Header stores pertinent information regarding the file like author and title, as well as various options for how to generate the output. The output options can become much more complex and involve table of contents, CSS styling, and more. The sky is the limit for the number of options you can include in this header. 
+
+Next, you have the ability to change options for all of the code chunks. The 'echo' option allows you to either hide or display code chunks in your report output. Again, countless other options exist and can be explored in [Chapter 27](https://r4ds.had.co.nz/r-markdown.html) of the R for Data Science textbook. 
+
+After the code chunk settings, I've written some general text. This text is just simple text, no code included. It can be used to organize ideas for yourself or your audience!
+
+Next, the most important part. I've shown how to include a code chunk. The easiest way is to use the hotkey (CTRL + Alt + I) to 'Insert' the chunk. Code chunks are where you can include all of your code, and each chunk is compartmentalized. Each chunk has a title and settings included within the {  } brackets. 
+
+Lastly, to generate the report, you want to 'knit' the R Markdown file. Knitting everything converts your R Markdown document into a neatly formatted html report! You'll want to make sure you have the knitr package downloaded prior to attempting to knit your document. To knit, simply click the small 'knit' button located at the top of the file. If everything is right, it should generate an html file in the same file storage as your R Markdown document and open the html file automatically. Let's take a look at the example shown!
+
+  &nbsp;
+<center>
+![](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/rmarkdown6.PNG)
+</center>
+
+  &nbsp;
+  
+And that's the quick crash course on R Markdown. Once you become handy with R Markdown, you'll realize how many doors it opens to seamlessly generate code and formatted figures, tables, and more. 
+
+  &nbsp;
+
 
 ***
+
+  &nbsp;
+  
 # Tables
 
 For any data analysis, being able to calculate descriptive statistics and represent them in a table is a must. This section will walk you through the [Table1](https://benjaminrich.github.io/table1/vignettes/table1-examples.html) package, a useful tool in representing descriptive statistics across several variables, as well as [Kable](https://cran.r-project.org/web/packages/kableExtra/vignettes/awesome_table_in_html.html#Installation), included in the [Knitr](https://yihui.org/knitr/) package, which offers abilities to transform dataframes/tibbles into well-formatted and meaningful tables. Just to reiterate, you should be working within an R Markdown file to create an html output; regular R source files will not do the trick. 

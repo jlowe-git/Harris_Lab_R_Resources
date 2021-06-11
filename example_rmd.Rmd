@@ -1,0 +1,42 @@
+---
+title: "Harris Lab Rocks!"
+author: "Jeremy Lowe"
+date: "6/11/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+# Introduction
+
+## The '#' symbol is how you make headers!
+
+### They keep getting smaller the more you add!
+Typing like this creates general text for your html report! It is really handy for writing down ideas in alongside code so you can keep track of them later or try to convey something to whatever audience is reading the report. To break up a section, simply use '***'. 
+
+***
+
+# Other Options
+
+You can also embed images or URLS in the file as well! Simply use the following formats, just be sure to remove the ~ symbol:
+
+![image caption]~(image file path)
+[text]~(hyperlink embedded within text)
+
+You can also **bold** or *italicize* words by wrapping words with *. 
+
+***
+
+# Let's code! 
+The simplest way to add a code chunk is to use the hotkey: CTRL + Alt + I
+This allows you to 'Insert' a chunk!
+
+```{r Code chunk title, echo=TRUE}
+
+print("Hello world!")
+
+```
+
