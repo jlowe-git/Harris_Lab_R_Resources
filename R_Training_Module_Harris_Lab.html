@@ -883,7 +883,11 @@ plot_1 + plot_2 + plot_3 + plot_4 + plot_annotation(title = &quot;Petal and Sepa
 </div>
 <div id="bivariate-data-analysis" class="section level1" number="5">
 <h1 number="5"><span class="header-section-number">5</span> Bivariate Data Analysis</h1>
-<p>Now say we are interested in determining if there is a difference in size of the sepal among different species. To do so, we will be using a one-way ANOVA. More information on how to choose the right statistical test can be found <a href="https://stats.idre.ucla.edu/other/mult-pkg/whatstat/">here</a>. The additional key assumptions for a one-way ANOVA are that the samples are independent of each other and randomly chosen, and that the dependent variable (in our case, sepal width or height) is normally distributed. At a basic level, a histogram can allow us to ‘eyeball’ it, but there are more rigorous statistical tests out there to determine normality. See the code below for how to create a basic histogram using the ggplot2 package:</p>
+<p>With bivariate data analysis, we will be doing as the name says: analyzing the relationship between two variables. Below, I will present examples using ANOVA, Pearson’s Correlation, Pearson’s Chi-squared Test, McNamer’s Test, Student’s t Test, and Fisher’s Exact Test. The test you will use for your data depends on the type of data you have, and more information on how to choose the right statistical test can be found <a href="https://stats.idre.ucla.edu/other/mult-pkg/whatstat/">here</a>. Now, let’s try some examples.</p>
+<p> </p>
+<div id="anova" class="section level2" number="5.1">
+<h2 number="5.1"><span class="header-section-number">5.1</span> ANOVA</h2>
+<p>Now say we are interested in determining if there is a difference in size of the sepal among different species. To do so, we will be using a one-way ANOVA. . The additional key assumptions for a one-way ANOVA are that the samples are independent of each other and randomly chosen, and that the dependent variable (in our case, sepal width or height) is normally distributed. At a basic level, a histogram can allow us to ‘eyeball’ it, but there are more rigorous statistical tests out there to determine normality. See the code below for how to create a basic histogram using the ggplot2 package:</p>
 <pre class="r code-style"><code># Creating histogram of sepal width variable
 plot_1 &lt;- iris %&gt;%
   ggplot() +
@@ -912,10 +916,107 @@ summary(anova_results)</code></pre>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>As we can see from the ANOVA results, there is a statistically significant (P &lt; 0.05) relationship between Iris species and sepal width! Using tools from Kable or ggplot2, we can decide to represent these results further to better communicate this relationship and its magnitude of effect.</p>
+<p> </p>
+</div>
+<div id="pearsons-correlation-pearsons-r" class="section level2" number="5.2">
+<h2 number="5.2"><span class="header-section-number">5.2</span> Pearson’s Correlation (Pearson’s r)</h2>
+<p>Pearson’s Correlation is one of the most widely used statistical tests and it is used to compare two normally distributed continuous variables. In our case, we are interested in understanding if there is a correlation between petal and sepal length for each species of iris. To do so, we will filter for each species type and run Pearson’s Correlation.</p>
+<pre class="r code-style"><code># Filtering for each type of iris
+
+setosa &lt;- iris%&gt;%
+  filter(Species == &quot;Setosa&quot;)
+versicolor &lt;- iris%&gt;%
+  filter(Species == &quot;Versicolor&quot;)
+virginica &lt;- iris%&gt;%
+  filter(Species == &quot;Virginica&quot;)
+
+# Running Pearson&#39;s Correlation for each type of iris
+
+setosa_r &lt;- cor.test(setosa$Petal.Length, setosa$Sepal.Length)
+
+
+versicolor_r &lt;- cor.test(versicolor$Petal.Length, versicolor$Sepal.Length)
+
+
+virginica_r &lt;- cor.test(virginica$Petal.Length, virginica$Sepal.Length)
+
+
+#Viewing results
+
+setosa_r</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  setosa$Petal.Length and setosa$Sepal.Length
+## t = 1.9209, df = 48, p-value = 0.0607
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.01206954  0.50776233
+## sample estimates:
+##       cor 
+## 0.2671758</code></pre>
+<pre class="r code-style"><code>versicolor_r</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  versicolor$Petal.Length and versicolor$Sepal.Length
+## t = 7.9538, df = 48, p-value = 2.586e-10
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.6020680 0.8532995
+## sample estimates:
+##      cor 
+## 0.754049</code></pre>
+<pre class="r code-style"><code>virginica_r</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  virginica$Petal.Length and virginica$Sepal.Length
+## t = 11.901, df = 48, p-value = 6.298e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7714542 0.9210172
+## sample estimates:
+##       cor 
+## 0.8642247</code></pre>
+<p> </p>
+<p>As we can see, Versicolor and Virginica species had a significant positive correlation (P &lt; 0.05) between sepal and petal length, whereas Setosa did not (P &gt; 0.05)</p>
+<p>Let’s take a look at these correlations using ggplot2!</p>
+<pre class="r code-style"><code>iris%&gt;%
+  ggplot()+
+  geom_point(aes(x = Petal.Length, y = Sepal.Length, color = Species)) +
+  theme_bw() + 
+  labs(x = &quot;Petal Length (cm)&quot;,
+       y = &quot;Sepal Length (cm)&quot;,
+       title = &quot;Correlation Between Petal and Sepal Lengths for Iris Species&quot;,
+       color = &quot;Species&quot;)</code></pre>
+<p><img src="data:image/png;base64,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" style="display: block; margin: auto;" /></p>
+<p> </p>
+</div>
+<div id="pearsons-chi-squared-test" class="section level2" number="5.3">
+<h2 number="5.3"><span class="header-section-number">5.3</span> Pearson’s Chi-squared Test</h2>
+<p> </p>
+</div>
+<div id="mcnamers-test" class="section level2" number="5.4">
+<h2 number="5.4"><span class="header-section-number">5.4</span> McNamer’s Test</h2>
+<p> </p>
+</div>
+<div id="students-t-test" class="section level2" number="5.5">
+<h2 number="5.5"><span class="header-section-number">5.5</span> Student’s t Test</h2>
+<p> </p>
+</div>
+<div id="fishers-exact-test" class="section level2" number="5.6">
+<h2 number="5.6"><span class="header-section-number">5.6</span> Fisher’s Exact Test</h2>
 <hr />
 </div>
-<div id="conclusion" class="section level1" number="6">
-<h1 number="6"><span class="header-section-number">6</span> Conclusion</h1>
+</div>
+<div id="regression-models" class="section level1" number="6">
+<h1 number="6"><span class="header-section-number">6</span> Regression Models</h1>
+<p>In environmental health research, we often want to see the effect of multiple variables on one outcome of interest through the use of regression models. Regression models can be very helpful in understanding the social determinants of certain outcomes, evaluating intervention impacts, and controlling for confounding by including potential confounders in the model. At this point, I have used the Iris dataset to its fullest capacity, so now we will be switching to an actual health dataset from ____.</p>
+<hr />
+</div>
+<div id="conclusion" class="section level1" number="7">
+<h1 number="7"><span class="header-section-number">7</span> Conclusion</h1>
 <p>This small training module was meant to introduce you to helpful tools in R to create tables and visualizations, as well as walking through a small bivariate analysis. However, this module only touches the surface of everything R is capable of. There are vast resources available, and it is recommended you check out all of the many resources that have been linked throughout this document!</p>
 <p>Have fun! Best of luck!</p>
 </div>

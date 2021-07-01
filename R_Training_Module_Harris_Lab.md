@@ -649,8 +649,13 @@ Again, there are various geoms (or plot types) that can be used with ggplot2; it
 
 # Bivariate Data Analysis
 
+With bivariate data analysis, we will be doing as the name says: analyzing the relationship between two variables. Below, I will present examples using ANOVA, Pearson's Correlation, Pearson's Chi-squared Test, McNamer's Test, Student's t Test, and Fisher's Exact Test. The test you will use for your data depends on the type of data you have, and more information on how to choose the right statistical test can be found [here](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/). Now, let's try some examples.
 
-Now say we are interested in determining if there is a difference in size of the sepal among different species. To do so, we will be using a one-way ANOVA. More information on how to choose the right statistical test can be found [here](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/). The additional key assumptions for a one-way ANOVA are that the samples are independent of each other and randomly chosen, and that the dependent variable (in our case, sepal width or height) is normally distributed. At a basic level, a histogram can allow us to 'eyeball' it, but there are more rigorous statistical tests out there to determine normality. See the code below for how to create a basic histogram using the ggplot2 package:
+  &nbsp;
+
+## ANOVA
+
+Now say we are interested in determining if there is a difference in size of the sepal among different species. To do so, we will be using a one-way ANOVA. . The additional key assumptions for a one-way ANOVA are that the samples are independent of each other and randomly chosen, and that the dependent variable (in our case, sepal width or height) is normally distributed. At a basic level, a histogram can allow us to 'eyeball' it, but there are more rigorous statistical tests out there to determine normality. See the code below for how to create a basic histogram using the ggplot2 package:
 
 
 ```{.r .code-style}
@@ -694,10 +699,143 @@ summary(anova_results)
 ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
 ```
 
-
-
     
 As we can see from the ANOVA results, there is a statistically significant (P < 0.05) relationship between Iris species and sepal width! Using tools from Kable or ggplot2, we can decide to represent these results further to better communicate this relationship and its magnitude of effect.
+
+  &nbsp;
+  
+## Pearson's Correlation (Pearson's r)
+
+Pearson's Correlation is one of the most widely used statistical tests and it is used to compare two normally distributed continuous variables. In our case, we are interested in understanding if there is a correlation between petal and sepal length for each species of iris. To do so, we will filter for each species type and run Pearson's Correlation. 
+
+
+```{.r .code-style}
+# Filtering for each type of iris
+
+setosa <- iris%>%
+  filter(Species == "Setosa")
+versicolor <- iris%>%
+  filter(Species == "Versicolor")
+virginica <- iris%>%
+  filter(Species == "Virginica")
+
+# Running Pearson's Correlation for each type of iris
+
+setosa_r <- cor.test(setosa$Petal.Length, setosa$Sepal.Length)
+
+
+versicolor_r <- cor.test(versicolor$Petal.Length, versicolor$Sepal.Length)
+
+
+virginica_r <- cor.test(virginica$Petal.Length, virginica$Sepal.Length)
+
+
+#Viewing results
+
+setosa_r
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  setosa$Petal.Length and setosa$Sepal.Length
+## t = 1.9209, df = 48, p-value = 0.0607
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.01206954  0.50776233
+## sample estimates:
+##       cor 
+## 0.2671758
+```
+
+```{.r .code-style}
+versicolor_r
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  versicolor$Petal.Length and versicolor$Sepal.Length
+## t = 7.9538, df = 48, p-value = 2.586e-10
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.6020680 0.8532995
+## sample estimates:
+##      cor 
+## 0.754049
+```
+
+```{.r .code-style}
+virginica_r
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  virginica$Petal.Length and virginica$Sepal.Length
+## t = 11.901, df = 48, p-value = 6.298e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7714542 0.9210172
+## sample estimates:
+##       cor 
+## 0.8642247
+```
+
+  &nbsp;
+  
+As we can see, Versicolor and Virginica species had a significant positive correlation (P < 0.05) between sepal and petal length, whereas Setosa did not (P > 0.05)
+
+Let's take a look at these correlations using ggplot2!
+
+
+```{.r .code-style}
+iris%>%
+  ggplot()+
+  geom_point(aes(x = Petal.Length, y = Sepal.Length, color = Species)) +
+  theme_bw() + 
+  labs(x = "Petal Length (cm)",
+       y = "Sepal Length (cm)",
+       title = "Correlation Between Petal and Sepal Lengths for Iris Species",
+       color = "Species")
+```
+
+<img src="R_Training_Module_Harris_Lab_files/figure-html/Creating point plot to show pearsons correlation-1.png" style="display: block; margin: auto;" />
+
+
+
+
+  &nbsp;
+  
+## Pearson's Chi-squared Test
+
+
+  &nbsp;
+  
+
+## McNamer's Test 
+
+
+  &nbsp;
+  
+  
+## Student's t Test
+
+
+
+  &nbsp;
+  
+## Fisher's Exact Test 
+
+
+***
+# Regression Models
+
+In environmental health research, we often want to see the effect of multiple variables on one outcome of interest through the use of regression models. Regression models can be very helpful in understanding the social determinants of certain outcomes, evaluating intervention impacts, and controlling for confounding by including potential confounders in the model. At this point, I have used the Iris dataset to its fullest capacity, so now we will be switching to an actual health dataset from ____. 
+
 
 
 ***
