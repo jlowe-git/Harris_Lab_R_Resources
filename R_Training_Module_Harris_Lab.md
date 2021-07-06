@@ -282,7 +282,6 @@ table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width + Species, data
 
 Looks good! However, there are many more ways to customize the table1 output. For one, to gain some more meaningful insights, I could stratify my numerical data over the 3 species of Irises. Let's say I am also interested in making this more publication ready, which means I need to change how my variable names appear in the table. Doing so would use the following code:
 
-  &nbsp;
   
 
 ```{.r .code-style}
@@ -792,6 +791,7 @@ As we can see, Versicolor and Virginica species had a significant positive corre
 Let's take a look at these correlations using ggplot2!
 
 
+
 ```{.r .code-style}
 iris%>%
   ggplot()+
@@ -812,19 +812,81 @@ iris%>%
   
 ## Pearson's Chi-squared Test
 
+Pearson's Chi-squared Test are useful in determining relationships between two categorical variables with any number of levels. In this example, we will be looking at the relationship between species and above/below median sepal width, just as we displayed in the cross-tabulation in an earlier example!
+
+
+```{.r .code-style}
+#Displaying cross-tab that was developed in an earlier example
+iris_kable%>%
+  group_by(Species, `Above/Below Median Sepal Width`)%>%
+  summarize(n=n())%>%
+  spread(Species, n)%>%
+  kable()%>%
+  add_header_above(c(" " = 1, "Species" = 3))%>%
+  add_header_above(c("Cross-tabulation of Iris Species and sepal Width (N = 150)" = 4))%>%
+  kable_styling(bootstrap_options = c("condensed"), full_width = F, font_size = 12)
+```
+
+```
+## `summarise()` has grouped output by 'Species'. You can override using the `.groups` argument.
+```
+
+<table class="table table-condensed" style="font-size: 12px; width: auto !important; margin-left: auto; margin-right: auto;">
+ <thead>
+<tr><th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="4"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Cross-tabulation of Iris Species and sepal Width (N = 150)</div></th></tr>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1"></th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Species</div></th>
+</tr>
+  <tr>
+   <th style="text-align:left;"> Above/Below Median Sepal Width </th>
+   <th style="text-align:right;"> Setosa </th>
+   <th style="text-align:right;"> Versicolor </th>
+   <th style="text-align:right;"> Virginica </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Above Median </td>
+   <td style="text-align:right;"> 48 </td>
+   <td style="text-align:right;"> 16 </td>
+   <td style="text-align:right;"> 29 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Below Median </td>
+   <td style="text-align:right;"> 2 </td>
+   <td style="text-align:right;"> 34 </td>
+   <td style="text-align:right;"> 21 </td>
+  </tr>
+</tbody>
+</table>
+
+```{.r .code-style}
+#Running chi-squared test 
+chisq.test(x = iris$Species, y = iris$Sepal.Width.Median)
+```
+
+```
+## 
+## 	Pearson's Chi-squared test
+## 
+## data:  iris$Species and iris$Sepal.Width.Median
+## X-squared = 43.973, df = 2, p-value = 2.828e-10
+```
 
   &nbsp;
   
+As we can see, the type of species is significantly associated with having above/below median sepal width (P < 0.05). To gain more insight on the direction of effect, we can look at the cross-tab. We can see that 96% (48 out of 50) of Setosa Irises, 32% (16 out of 50) of Versicolor Irises, and 58% (29 out of 50) Virginica Irises have above median sepal widths. This association suggests that Setosa Irises have the largest sepal widths of the three species.    
+  
 
-## McNamer's Test 
+## McNemar Test 
 
+The McNemar Test is similar to chi-squared tests in that it is used on two categorical variables, except the categorical variables can only have 2 levels and the test is used for paired data. In an epidemiological sense, paired data means a measurement of an outcome is coming multiple times from a same participant or location. An example of this would be tracking the height of children longitudinally.  
 
   &nbsp;
   
   
 ## Student's t Test
-
-
 
   &nbsp;
   
@@ -836,6 +898,22 @@ iris%>%
 
 In environmental health research, we often want to see the effect of multiple variables on one outcome of interest through the use of regression models. Regression models can be very helpful in understanding the social determinants of certain outcomes, evaluating intervention impacts, and controlling for confounding by including potential confounders in the model. At this point, I have used the Iris dataset to its fullest capacity, so now we will be switching to an actual health dataset from ____. 
 
+
+  &nbsp;
+  
+## Linear Regression
+
+
+  &nbsp;
+  
+## Logistic Regression
+
+
+  &nbsp;
+  
+## Poisson Regression
+
+  &nbsp;
 
 
 ***

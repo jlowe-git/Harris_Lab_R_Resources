@@ -444,7 +444,6 @@ table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width + Species, data
 </div>
 <p> </p>
 <p>Looks good! However, there are many more ways to customize the table1 output. For one, to gain some more meaningful insights, I could stratify my numerical data over the 3 species of Irises. Let’s say I am also interested in making this more publication ready, which means I need to change how my variable names appear in the table. Doing so would use the following code:</p>
-<p> </p>
 <pre class="r code-style"><code># Adjusting the display of variable names
 label(iris$Sepal.Length) &lt;- &quot;Sepal Length&quot;
 label(iris$Sepal.Width) &lt;- &quot;Sepal Width&quot;
@@ -995,10 +994,94 @@ setosa_r</code></pre>
 </div>
 <div id="pearsons-chi-squared-test" class="section level2" number="5.3">
 <h2 number="5.3"><span class="header-section-number">5.3</span> Pearson’s Chi-squared Test</h2>
-<p> </p>
+<p>Pearson’s Chi-squared Test are useful in determining relationships between two categorical variables with any number of levels. In this example, we will be looking at the relationship between species and above/below median sepal width, just as we displayed in the cross-tabulation in an earlier example!</p>
+<pre class="r code-style"><code>#Displaying cross-tab that was developed in an earlier example
+iris_kable%&gt;%
+  group_by(Species, `Above/Below Median Sepal Width`)%&gt;%
+  summarize(n=n())%&gt;%
+  spread(Species, n)%&gt;%
+  kable()%&gt;%
+  add_header_above(c(&quot; &quot; = 1, &quot;Species&quot; = 3))%&gt;%
+  add_header_above(c(&quot;Cross-tabulation of Iris Species and sepal Width (N = 150)&quot; = 4))%&gt;%
+  kable_styling(bootstrap_options = c(&quot;condensed&quot;), full_width = F, font_size = 12)</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;Species&#39;. You can override using the `.groups` argument.</code></pre>
+<table class="table table-condensed" style="font-size: 12px; width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="4">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Cross-tabulation of Iris Species and sepal Width (N = 150)
 </div>
-<div id="mcnamers-test" class="section level2" number="5.4">
-<h2 number="5.4"><span class="header-section-number">5.4</span> McNamer’s Test</h2>
+</th>
+</tr>
+<tr>
+<th style="empty-cells: hide;border-bottom:hidden;" colspan="1">
+</th>
+<th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3">
+<div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">
+Species
+</div>
+</th>
+</tr>
+<tr>
+<th style="text-align:left;">
+Above/Below Median Sepal Width
+</th>
+<th style="text-align:right;">
+Setosa
+</th>
+<th style="text-align:right;">
+Versicolor
+</th>
+<th style="text-align:right;">
+Virginica
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Above Median
+</td>
+<td style="text-align:right;">
+48
+</td>
+<td style="text-align:right;">
+16
+</td>
+<td style="text-align:right;">
+29
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+Below Median
+</td>
+<td style="text-align:right;">
+2
+</td>
+<td style="text-align:right;">
+34
+</td>
+<td style="text-align:right;">
+21
+</td>
+</tr>
+</tbody>
+</table>
+<pre class="r code-style"><code>#Running chi-squared test 
+chisq.test(x = iris$Species, y = iris$Sepal.Width.Median)</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test
+## 
+## data:  iris$Species and iris$Sepal.Width.Median
+## X-squared = 43.973, df = 2, p-value = 2.828e-10</code></pre>
+<p> </p>
+<p>As we can see, the type of species is significantly associated with having above/below median sepal width (P &lt; 0.05). To gain more insight on the direction of effect, we can look at the cross-tab. We can see that 96% (48 out of 50) of Setosa Irises, 32% (16 out of 50) of Versicolor Irises, and 58% (29 out of 50) Virginica Irises have above median sepal widths. This association suggests that Setosa Irises have the largest sepal widths of the three species.</p>
+</div>
+<div id="mcnemar-test" class="section level2" number="5.4">
+<h2 number="5.4"><span class="header-section-number">5.4</span> McNemar Test</h2>
+<p>The McNemar Test is similar to chi-squared tests in that it is used on two categorical variables, except the categorical variables can only have 2 levels and the test is used for paired data. In an epidemiological sense, paired data means a measurement of an outcome is coming multiple times from a same participant or location. An example of this would be tracking the height of children longitudinally.</p>
 <p> </p>
 </div>
 <div id="students-t-test" class="section level2" number="5.5">
@@ -1013,7 +1096,20 @@ setosa_r</code></pre>
 <div id="regression-models" class="section level1" number="6">
 <h1 number="6"><span class="header-section-number">6</span> Regression Models</h1>
 <p>In environmental health research, we often want to see the effect of multiple variables on one outcome of interest through the use of regression models. Regression models can be very helpful in understanding the social determinants of certain outcomes, evaluating intervention impacts, and controlling for confounding by including potential confounders in the model. At this point, I have used the Iris dataset to its fullest capacity, so now we will be switching to an actual health dataset from ____.</p>
+<p> </p>
+<div id="linear-regression" class="section level2" number="6.1">
+<h2 number="6.1"><span class="header-section-number">6.1</span> Linear Regression</h2>
+<p> </p>
+</div>
+<div id="logistic-regression" class="section level2" number="6.2">
+<h2 number="6.2"><span class="header-section-number">6.2</span> Logistic Regression</h2>
+<p> </p>
+</div>
+<div id="poisson-regression" class="section level2" number="6.3">
+<h2 number="6.3"><span class="header-section-number">6.3</span> Poisson Regression</h2>
+<p> </p>
 <hr />
+</div>
 </div>
 <div id="conclusion" class="section level1" number="7">
 <h1 number="7"><span class="header-section-number">7</span> Conclusion</h1>

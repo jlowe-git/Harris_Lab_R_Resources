@@ -188,7 +188,6 @@ table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width + Species, data
 
 Looks good! However, there are many more ways to customize the table1 output. For one, to gain some more meaningful insights, I could stratify my numerical data over the 3 species of Irises. Let's say I am also interested in making this more publication ready, which means I need to change how my variable names appear in the table. Doing so would use the following code:
 
-  &nbsp;
   
 ```{r Descriptive Statistics of Iris Data pt 2, echo = TRUE, fig.align='center'}
 
@@ -468,6 +467,7 @@ As we can see, Versicolor and Virginica species had a significant positive corre
 
 Let's take a look at these correlations using ggplot2!
 
+
 ```{r Creating point plot to show pearsons correlation, echo=TRUE, fig.align='center'}
 
 iris%>%
@@ -489,19 +489,39 @@ iris%>%
   
 ## Pearson's Chi-squared Test
 
+Pearson's Chi-squared Test are useful in determining relationships between two categorical variables with any number of levels. In this example, we will be looking at the relationship between species and above/below median sepal width, just as we displayed in the cross-tabulation in an earlier example!
+
+```{r chi-squared test example, fig.align='center', echo=TRUE}
+
+#Displaying cross-tab that was developed in an earlier example
+iris_kable%>%
+  group_by(Species, `Above/Below Median Sepal Width`)%>%
+  summarize(n=n())%>%
+  spread(Species, n)%>%
+  kable()%>%
+  add_header_above(c(" " = 1, "Species" = 3))%>%
+  add_header_above(c("Cross-tabulation of Iris Species and sepal Width (N = 150)" = 4))%>%
+  kable_styling(bootstrap_options = c("condensed"), full_width = F, font_size = 12)
+
+#Running chi-squared test 
+chisq.test(x = iris$Species, y = iris$Sepal.Width.Median)
+
+
+```
 
   &nbsp;
   
+As we can see, the type of species is significantly associated with having above/below median sepal width (P < 0.05). To gain more insight on the direction of effect, we can look at the cross-tab. We can see that 96% (48 out of 50) of Setosa Irises, 32% (16 out of 50) of Versicolor Irises, and 58% (29 out of 50) Virginica Irises have above median sepal widths. This association suggests that Setosa Irises have the largest sepal widths of the three species.    
+  
 
-## McNamer's Test 
+## McNemar Test 
 
+The McNemar Test is similar to chi-squared tests in that it is used on two categorical variables, except the categorical variables can only have 2 levels and the test is used for paired data. In an epidemiological sense, paired data means a measurement of an outcome is coming multiple times from a same participant or location. An example of this would be tracking the height of children longitudinally.  
 
   &nbsp;
   
   
 ## Student's t Test
-
-
 
   &nbsp;
   
