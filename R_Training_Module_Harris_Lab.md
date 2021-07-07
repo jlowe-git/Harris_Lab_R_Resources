@@ -44,9 +44,13 @@ For this small module, we will be using data from the *Iris* dataset, which is i
 
 </center>
 
+  &nbsp; 
+  
+For later analyses in this tutorial, we will switch to using a practice dataset focused on respiratory health provided by [Mike Marin of the University of British Columbia](https://statslectures.com/r-scripts-datasets). This dataset presents information regarding lung capacity, age, smoker status, gender, and more. It is a wonderful dataset to apply some ideas health analyses to! 
+
   &nbsp;
 
-And the code chunk below demonstrates how to load the data and other relevant packages into the environment:
+The code chunk below demonstrates how to load the data and other relevant packages into the environment:
 
   &nbsp;
   
@@ -64,6 +68,9 @@ library(patchwork)
 # You will likely use the read_csv() function in Tidyverse to load other datasets.
 data(iris)
 
+#Dataset provided by Mike Marin of University of British Columbia 
+lung_cap <- readr::read_csv('https://raw.githubusercontent.com/jlowe-git/Harris_Lab_R_Resources/main/LungCapData.csv')
+
 # Take a peek at the data to see what we're working with!
 head(iris)
 ```
@@ -76,6 +83,22 @@ head(iris)
 ## 4          4.6         3.1          1.5         0.2  setosa
 ## 5          5.0         3.6          1.4         0.2  setosa
 ## 6          5.4         3.9          1.7         0.4  setosa
+```
+
+```{.r .code-style}
+head(lung_cap)
+```
+
+```
+## # A tibble: 6 x 6
+##   LungCap   Age Height Smoke Gender Caesarean
+##     <dbl> <dbl>  <dbl> <chr> <chr>  <chr>    
+## 1    6.48     6   62.1 no    male   no       
+## 2   10.1     18   74.7 yes   female no       
+## 3    9.55    16   69.7 no    female yes      
+## 4   11.1     14   71   no    male   no       
+## 5    4.8      5   56.9 no    male   no       
+## 6    6.22    11   58.7 no    female no
 ```
 
   &nbsp;
@@ -407,7 +430,135 @@ table1(~ Sepal.Length + Sepal.Width + Petal.Length + Petal.Width | Species, data
 
   &nbsp;
   
-Nice! We can begin to see some of the differences across the different types of species and the table looks great. What I've shown here just scratches the surface of [Table1](https://benjaminrich.github.io/table1/vignettes/table1-examples.html), and I recommend checking out the documentation to see more of what it is capable of.
+Nice! We can begin to see some of the differences across the different types of species and the table looks great. 
+
+  &nbsp;
+  
+Next, let's take a look at the descriptive statistics of our respiratory health dataset. To do so, we will be using Table1 again. 
+
+
+```{.r .code-style}
+# Adjusting the name of one variable
+label(lung_cap$LungCap) <- "Lung Capacity"
+
+# We need to turn some variables from character data types into factor data types
+lung_cap$Smoke <- factor(lung_cap$Smoke)
+lung_cap$Gender <- factor(lung_cap$Gender)
+lung_cap$Caesarean <- factor(lung_cap$Caesarean)
+
+
+# Next, we will represent it in Table1 and stratify by gender
+table1(~ LungCap + Age + Height + Smoke + Caesarean | Gender, data = lung_cap)
+```
+
+```{=html}
+<div class="Rtable1"><table class="Rtable1">
+<thead>
+<tr>
+<th class='rowlabel firstrow lastrow'></th>
+<th class='firstrow lastrow'><span class='stratlabel'>female<br><span class='stratn'>(N=358)</span></span></th>
+<th class='firstrow lastrow'><span class='stratlabel'>male<br><span class='stratn'>(N=367)</span></span></th>
+<th class='firstrow lastrow'><span class='stratlabel'>Overall<br><span class='stratn'>(N=725)</span></span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class='rowlabel firstrow'>Lung Capacity</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>7.41 (2.56)</td>
+<td>8.31 (2.68)</td>
+<td>7.86 (2.66)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>7.75 [0.507, 13.1]</td>
+<td class='lastrow'>8.35 [1.18, 14.7]</td>
+<td class='lastrow'>8.00 [0.507, 14.7]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>Age</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>12.4 (3.96)</td>
+<td>12.2 (4.05)</td>
+<td>12.3 (4.00)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>13.0 [3.00, 19.0]</td>
+<td class='lastrow'>12.0 [3.00, 19.0]</td>
+<td class='lastrow'>13.0 [3.00, 19.0]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>Height</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>Mean (SD)</td>
+<td>63.8 (7.03)</td>
+<td>65.8 (7.24)</td>
+<td>64.8 (7.20)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>Median [Min, Max]</td>
+<td class='lastrow'>64.4 [45.3, 79.8]</td>
+<td class='lastrow'>66.1 [47.8, 81.8]</td>
+<td class='lastrow'>65.4 [45.3, 81.8]</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>Smoke</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>no</td>
+<td>314 (87.7%)</td>
+<td>334 (91.0%)</td>
+<td>648 (89.4%)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>yes</td>
+<td class='lastrow'>44.0 (12.3%)</td>
+<td class='lastrow'>33.0 (9.0%)</td>
+<td class='lastrow'>77.0 (10.6%)</td>
+</tr>
+<tr>
+<td class='rowlabel firstrow'>Caesarean</td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+<td class='firstrow'></td>
+</tr>
+<tr>
+<td class='rowlabel'>no</td>
+<td>279 (77.9%)</td>
+<td>282 (76.8%)</td>
+<td>561 (77.4%)</td>
+</tr>
+<tr>
+<td class='rowlabel lastrow'>yes</td>
+<td class='lastrow'>79.0 (22.1%)</td>
+<td class='lastrow'>85.0 (23.2%)</td>
+<td class='lastrow'>164 (22.6%)</td>
+</tr>
+</tbody>
+</table>
+</div>
+```
+
+
+What I've shown here just scratches the surface of [Table1](https://benjaminrich.github.io/table1/vignettes/table1-examples.html), and I recommend checking out the documentation to see more of what it is capable of.
 
   &nbsp;
   
@@ -635,7 +786,7 @@ plot_1 + plot_2 + plot_3 + plot_4 + plot_annotation(title = "Petal and Sepal Cha
   &nbsp;
 
   
-Again, there are various geoms (or plot types) that can be used with ggplot2; it is all a matter of finding the right one to represent your data! 
+Again, there are various geoms (or plot types) that can be used with ggplot2; it is all a matter of finding the right one to represent your data! This section of the tutorial was meant to give you an overview of ggplot, but we will continue to explore some of these other geoms alongside some of our analyses.
 
 
 
@@ -648,8 +799,9 @@ Again, there are various geoms (or plot types) that can be used with ggplot2; it
 
 # Bivariate Data Analysis
 
-With bivariate data analysis, we will be doing as the name says: analyzing the relationship between two variables. Below, I will present examples using ANOVA, Pearson's Correlation, Pearson's Chi-squared Test, McNamer's Test, Student's t Test, and Fisher's Exact Test. The test you will use for your data depends on the type of data you have, and more information on how to choose the right statistical test can be found [here](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/). Now, let's try some examples.
+With bivariate data analysis, we will be doing as the name says: analyzing the relationship between two variables. Below, I will present examples using ANOVA, Pearson's Correlation, Pearson's Chi-squared Test, McNemar Test, Student's t Test, and Fisher's Exact Test. The test you will use for your data depends on the type of data you have, and more information on how to choose the right statistical test can be found [here](https://stats.idre.ucla.edu/other/mult-pkg/whatstat/). Let's try some examples.
 
+  &nbsp;
   &nbsp;
 
 ## ANOVA
@@ -701,6 +853,7 @@ summary(anova_results)
     
 As we can see from the ANOVA results, there is a statistically significant (P < 0.05) relationship between Iris species and sepal width! Using tools from Kable or ggplot2, we can decide to represent these results further to better communicate this relationship and its magnitude of effect.
 
+  &nbsp;
   &nbsp;
   
 ## Pearson's Correlation (Pearson's r)
@@ -794,8 +947,9 @@ Let's take a look at these correlations using ggplot2!
 
 ```{.r .code-style}
 iris%>%
-  ggplot()+
-  geom_point(aes(x = Petal.Length, y = Sepal.Length, color = Species)) +
+  ggplot(aes(x = Petal.Length, y = Sepal.Length, color = Species))+
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)+
   theme_bw() + 
   labs(x = "Petal Length (cm)",
        y = "Sepal Length (cm)",
@@ -805,11 +959,51 @@ iris%>%
 
 <img src="R_Training_Module_Harris_Lab_files/figure-html/Creating point plot to show pearsons correlation-1.png" style="display: block; margin: auto;" />
 
-
-
-
   &nbsp;
   
+Next, let's take a look at our respiratory health dataset. In particular, we want to understand if there is a correlation between lung capacity and age using Pearson's correlation. To do so, we will use the following code:
+
+
+```{.r .code-style}
+#Pearson's Correlation
+cor.test(lung_cap$Age, lung_cap$LungCap)
+```
+
+```
+## 
+## 	Pearson's product-moment correlation
+## 
+## data:  lung_cap$Age and lung_cap$LungCap
+## t = 38.476, df = 723, p-value < 2.2e-16
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7942660 0.8422217
+## sample estimates:
+##       cor 
+## 0.8196749
+```
+
+```{.r .code-style}
+#Point plot displaying the significant correlation
+lung_cap%>%
+  ggplot(aes(x = Age, y = LungCap))+
+  geom_point() +
+  geom_smooth(method = 'lm', se = FALSE)+
+  theme_bw() + 
+  labs(x = "Age (years)",
+       y = "Lung Capacity",
+       title = "Correlation Between Age and Lung Capacity")
+```
+
+<img src="R_Training_Module_Harris_Lab_files/figure-html/Pearsons Correlation Example 2-1.png" style="display: block; margin: auto;" />
+
+  &nbsp;
+
+Based on Pearson's Correlation, there is a significant positive correlation between age and lung capacity (r = 0.82, P < 0.05).
+
+  &nbsp;
+  &nbsp;
+
 ## Pearson's Chi-squared Test
 
 Pearson's Chi-squared Test are useful in determining relationships between two categorical variables with any number of levels. In this example, we will be looking at the relationship between species and above/below median sepal width, just as we displayed in the cross-tabulation in an earlier example!
@@ -878,35 +1072,342 @@ chisq.test(x = iris$Species, y = iris$Sepal.Width.Median)
   
 As we can see, the type of species is significantly associated with having above/below median sepal width (P < 0.05). To gain more insight on the direction of effect, we can look at the cross-tab. We can see that 96% (48 out of 50) of Setosa Irises, 32% (16 out of 50) of Versicolor Irises, and 58% (29 out of 50) Virginica Irises have above median sepal widths. This association suggests that Setosa Irises have the largest sepal widths of the three species.    
   
+  &nbsp;
+  &nbsp;
 
 ## McNemar Test 
 
-The McNemar Test is similar to chi-squared tests in that it is used on two categorical variables, except the categorical variables can only have 2 levels and the test is used for paired data. In an epidemiological sense, paired data means a measurement of an outcome is coming multiple times from a same participant or location. An example of this would be tracking the height of children longitudinally.  
+The McNemar Test is similar to chi-squared tests in that it is used on two categorical variables, except the categorical variables can only have 2 levels and the test is used for paired data. In an epidemiological sense, paired data means a measurement of an outcome is taken multiple times from the same participant or location. An example of this would be tracking the height or prevalence of diarrhea of children longitudinally. Sadly, in our case, we are not working with paired data, but I will still show example code for how to run the test in case you find yourself needing it.
+
+
+```{.r .code-style}
+#In this case, mcnemar.test() function requires that we input two variables that contain factor data:
+
+# mcnemar.test(x = data$x_variable, y = data$y_variable, correct = TRUE)
+
+# Uncomment the line above to use the mcnemar.test() function elsewhere.
+```
+
 
   &nbsp;
-  
+  &nbsp;
   
 ## Student's t Test
 
+At this point, we have used our Iris dataset to its fullest capacity, and it is time to switch things up. We will now be using our respiratory health dataset, lung_cap, for the remainder of the tutorial.
+
+After looking at descriptive statistics, we will want to use a bivariate correlation test to understand if there are any associations between our variables of interest. The t test is helpful in determining if there are any statistically significant differences in means between two groups. The t test requires that we input one continuous variable and one categorical variable with two levels. Let's compare the lung capacity of smokers versus nonsmokers.
+
+
+```{.r .code-style}
+#Running t test example
+t.test(LungCap ~ Smoke, data = lung_cap, paired = FALSE)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  LungCap by Smoke
+## t = -3.6498, df = 117.72, p-value = 0.0003927
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -1.3501778 -0.4003548
+## sample estimates:
+##  mean in group no mean in group yes 
+##          7.770188          8.645455
+```
+
+  &nbsp;
+  
+There is a significant difference in mean lung capacity between smokers and nonsmokers (P < 0.05), in which smokers have greater mean lung capacity. However, this is a simple bivariate correlation and could be confounded by other variables. Particularly, we know age could be a confounding since our age range is only 3-19 and smoking is a habit usually developed later in life. Typically, smoking can hurt lung capacity, but in our case, it may be a better indication of age. Let's check if smoking is associated to age using another t test.
+
+
+```{.r .code-style}
+#Running t test example
+t.test(Age ~ Smoke, data = lung_cap, paired = FALSE)
+```
+
+```
+## 
+## 	Welch Two Sample t-test
+## 
+## data:  Age by Smoke
+## t = -8.0803, df = 123.33, p-value = 5.023e-13
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -3.415842 -2.071612
+## sample estimates:
+##  mean in group no mean in group yes 
+##          12.03549          14.77922
+```
+  &nbsp;
+  
+Based on the result of the t test, we can see a significant difference in age between smokers and nonsmokers (P < 0.05). This confirms our hypothesis that age is also associated with smoking. We will take a look later at how the effect of this confounding relationship can be controlled for using regression analyses.
+
+One additional note for t tests; we can also run a paired t test if the data meets meets the criteria. This is similar to how the McNemar Test requires paired data to be run. If our data includes multiple observations of one participant/location/item/etc, then a paired t test is needed. To do so, you would simply change the 'paired' option in the function to = TRUE. 
+
+  &nbsp;
   &nbsp;
   
 ## Fisher's Exact Test 
+
+Fisher's exact test is similar to Pearson's chi-squared test in that it is a comparison between two categorical variables, except Fisher's exact test is used more appropriate for small sample sizes. A general rule of thumb is that Fisher's exact test should be used when one of the frequencies of a 2x2 cross-tab is < 5. Again, our example data does not meet this criteria for Fisher's Exact Test, but example code is provided below.
+
+
+```{.r .code-style}
+# Fisher's Exact Test Example Code
+
+# fisher.test(x = data$x_variable, y = data$y_variable)
+
+#Uncomment the line above to use the fisher.test() function.
+```
+
 
 
 ***
 # Regression Models
 
-In environmental health research, we often want to see the effect of multiple variables on one outcome of interest through the use of regression models. Regression models can be very helpful in understanding the social determinants of certain outcomes, evaluating intervention impacts, and controlling for confounding by including potential confounders in the model. At this point, I have used the Iris dataset to its fullest capacity, so now we will be switching to an actual health dataset from ____. 
+In global health research, we often want to see the effect of multiple variables on one outcome of interest through the use of regression models. Regression models can be very helpful in understanding the social determinants of certain outcomes, evaluating intervention impacts, and controlling for confounding by including potential confounders in the model. For this section, we will be relying upon the data from our respiratory health dataset, lung_cap.
 
+  &nbsp;
+  &nbsp;
+  
+## A Note on Confounding
+
+As we discussed in the previous section, we believe there to be confounding between age and smoker status when determining their effects on lung capacity. For [confounding](https://doi.org/10.1038/sj.ki.5002650) to exist, three criteria must be met:
+
+1. The confounding variable must have an association with the outcome of interest.
+2. The confounding variable must have an association with the exposure of interest. 
+3. The confounding variable must not be dependent on the exposure. Another way to consider this is that it must not be in the causal pathway between the exposure and outcome. This would be instead called a mediator.
+
+As we made note in the bivariate analysis section, we believe age could be a confounder in the relationship between smoking and lung capacity based on the age range of our sample. The figure below displays the relationship at hand:
+
+![](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/confounding.jpeg)
+  &nbsp;
+
+To understand this further and control for the effect of confounding, we will use simple linear regression and multiple linear regression models.
 
   &nbsp;
   
 ## Linear Regression
 
+### Simple Linear Regression
+
+Similar to how we used Pearson's Correlation to understand the relationship between age and lung capacity, we can do so again with simple linear regression. Simple linear regression compares two continuous variables in a similar manner. The code for doing so is below:
+
+
+```{.r .code-style}
+#Simple linear regression model
+lm_results <- lm(LungCap ~ Age, data = lung_cap)
+
+#Displaying summary of results
+summary(lm_results)
+```
+
+```
+## 
+## Call:
+## lm(formula = LungCap ~ Age, data = lung_cap)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.7799 -1.0203 -0.0005  0.9789  4.2650 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  1.14686    0.18353   6.249 7.06e-10 ***
+## Age          0.54485    0.01416  38.476  < 2e-16 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.526 on 723 degrees of freedom
+## Multiple R-squared:  0.6719,	Adjusted R-squared:  0.6714 
+## F-statistic:  1480 on 1 and 723 DF,  p-value: < 2.2e-16
+```
+  &nbsp;
+  
+We can see the correlation coefficient for age this time is only r = 0.54, as compared to r = 0.82 when we originally ran Pearson's r Correlation. This is because the linear model is now accounting for the intercept at 1.15, as opposed to 0, so the slope is decreased. 
+
+The final linear model can be read as: Lung Capacity = 1.15 + 0.54 * (Age)
+
+
+Similarly, we can run simple linear regression with a continuous variable as the output and a categorical variable as the covariate. Let's look into the relationship between smoking and lung capacity now.
+
+
+```{.r .code-style}
+#Simple linear regression model, this time with smoking as the covariate of interest
+lm_results <- lm(LungCap ~ Smoke, data = lung_cap)
+
+#Displaying summary of results
+summary(lm_results)
+```
+
+```
+## 
+## Call:
+## lm(formula = LungCap ~ Smoke, data = lung_cap)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -7.2632 -1.7202  0.1048  1.9048  6.9048 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   7.7702     0.1041   74.64   <2e-16 ***
+## Smokeyes      0.8753     0.3194    2.74   0.0063 ** 
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.65 on 723 degrees of freedom
+## Multiple R-squared:  0.01028,	Adjusted R-squared:  0.008908 
+## F-statistic: 7.507 on 1 and 723 DF,  p-value: 0.006297
+```
+  &nbsp;
+  
+As we suspected, there is a similar relationship. However, we interpret the results slightly differently. Since smoking was a categorical variable, we now have an instance where a variable was 'dummy' coded with a reference category. This means that the model is comparing those who smoke to a reference category of those who do not smoke.
+
+Our final model now takes the format: Lung Capacity = 7.77 + 0.88 * (Smoker)
+
+If a person smokes, then 'Smoker' is equal to 1 and the lung capacity is 8.65, which is also the average lung capacity of all smokers. If a person does not smoke, then 'Smoker' is equal to 0 and the lung capacity is 7.77, which is also the average lung capacity of all non-smokers.
+
+However, given the current state of medical research, smoking should not increase one's lung capacity. To understand this confounding relationship between age and smoking, we will use multiple linear regression. 
+
+  &nbsp;
+
+
+### Multiple Linear Regression
+
+Again, we suspect there to be a confounding relationship between age and smoking status, so to help control for this we will be using multiple linear regression. Our outcome of interest, lung capacity, is still a continuous variable, but with multiple linear regression we will be including age and smoking status as covariates in the model. Additionally, since we know age and smoking status to already be correlated, we will be testing for multicollinearity in our regression model using variance inflation factors. The following code shows how to do so and displays our results:
+
+
+```{.r .code-style}
+#Multiple linear regression model
+lm_results <- lm(LungCap ~ Age + Smoke, data = lung_cap)
+
+#Displaying summary of results
+summary(lm_results)
+```
+
+```
+## 
+## Call:
+## lm(formula = LungCap ~ Age + Smoke, data = lung_cap)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.8559 -1.0289 -0.0363  1.0083  4.1995 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  1.08572    0.18299   5.933 4.61e-09 ***
+## Age          0.55540    0.01438  38.628  < 2e-16 ***
+## Smokeyes    -0.64859    0.18676  -3.473 0.000546 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 1.514 on 722 degrees of freedom
+## Multiple R-squared:  0.6773,	Adjusted R-squared:  0.6764 
+## F-statistic: 757.5 on 2 and 722 DF,  p-value: < 2.2e-16
+```
+
+```{.r .code-style}
+#Determining variance inflation factors (VIF) to understand multicollinearity
+car::vif(lm_results)
+```
+
+```
+##      Age    Smoke 
+## 1.046703 1.046703
+```
+
+  &nbsp;
+  
+  Interesting results! First, we see that age and smoking are still significantly associated with lung capacity (P < 0.05), but there is now a negative effect from smoking. Controlling for age, we can see now that being a smoker leads to an average 0.65 **decrease** in lung capacity. This contradicts our earlier relationship we were witnessing from bivariate correlation tests where being a smoker seemed to increase lung capacity, but now we know that age is an important confounder since it switches the direction of effect.
+  
+  Multicollinearity can skew the results of a regression model, but since our variance inflation factors are close to 1, this is not a concern in this instance. 
+
 
   &nbsp;
   
 ## Logistic Regression
+
+Not all outcomes of interest will be continuous variables like lung capacity. Often, we will be working with binary outcomes like child mortality or diarrheal prevalence. Logistic regression models are useful in scenarios where an outcome is binary. However, unlike linear regression models, the coefficients of the model are actually log-transformed odds ratios. More information on odds ratios can be found [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/).
+
+In this example, let's explore some of the determinants of smoking. It is important to note that our example dataset is lacking several other important determinants of smoking like wealth and education, so this example (and every other for that matter) should only be used for educational purposes.
+
+
+```{.r .code-style}
+#First, we need to change the factor levels to a binary 0 (nonsmoker) or 1 (smoker)
+lung_cap$Smoke <- fct_recode(lung_cap$Smoke,
+  "0" = "no",
+  "1" = "yes"
+)
+
+#Logistic regression model
+log_results <- glm(Smoke ~ Age + Gender + Height + LungCap, data = lung_cap, family = "binomial") # The 'family' option allows us to select for a logistic regression model!
+summary_results <- summary(log_results)
+
+#Now, we need to extract and exponentiate the odds ratios since they are log-transformed
+#Extracting p values from the logistic regression
+p_values <- coef(summary_results)[,4]%>%
+  round(digits = 4)
+#Extracting coefficients from the logistic regression and turning into odds ratios
+odds <- coef(log_results)%>%
+  exp()%>%
+  round(digits = 4)
+
+#Storing into a dataframe
+results <- data.frame(odds, p_values)
+
+results%>%
+  kable()%>%
+  add_header_above(c("Logistic Regression Model Results for Smoking Status (N = 725)" = 3))%>%
+  kable_paper(bootstrap_options = c("striped","condensed"), font_size = 12, full_width = F)
+```
+
+<table class=" lightable-paper" style='font-size: 12px; font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
+ <thead>
+<tr><th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Logistic Regression Model Results for Smoking Status (N = 725)</div></th></tr>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> odds </th>
+   <th style="text-align:right;"> p_values </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> (Intercept) </td>
+   <td style="text-align:right;"> 0.0000 </td>
+   <td style="text-align:right;"> 0.0000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:right;"> 1.3089 </td>
+   <td style="text-align:right;"> 0.0000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Gendermale </td>
+   <td style="text-align:right;"> 0.8693 </td>
+   <td style="text-align:right;"> 0.6039 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Height </td>
+   <td style="text-align:right;"> 1.1813 </td>
+   <td style="text-align:right;"> 0.0004 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LungCap </td>
+   <td style="text-align:right;"> 0.5605 </td>
+   <td style="text-align:right;"> 0.0000 </td>
+  </tr>
+</tbody>
+</table>
+
+  &nbsp;
+  
+From the logistic regression model we can see age, height, and lung capacity to be significantly associated with smoking status (P < 0.05). To interpret the odds ratio, if it is > 1 it means there is an increase in odds of being a smoker, whereas if the odds ratio is < 1, it means there is a decrease in odds of being a smoker. So for age, there was an increase in odds between each incremental year old and being a smoker. This positive association is similarly seen with height. However, a decrease in odds was observed with smoking and better lung capacity.
+
 
 
   &nbsp;
@@ -915,6 +1416,87 @@ In environmental health research, we often want to see the effect of multiple va
 
   &nbsp;
 
+As explained previously, logistic regression models return odds ratios, however, this can overestimate the prevalence if the outcome is not rare. Poisson regression models are typically used with ordinal count data (1, 2, 3, 4, etc.), but can also be used with binary data (0 or 1). Poisson regressions also return prevalence ratios rather than odds ratios. Further discussion on the use of Poisson versus logistic regression can be found [here](https://doi.org/10.1002/sim.7059).
+
+Let's explore the same relationships but using Poisson Regression.
+
+
+```{.r .code-style}
+#First, we need to change the factor levels to a binary 0 (nonsmoker) or 1 (smoker)
+lung_cap$Smoke <- fct_recode(lung_cap$Smoke,
+  "0" = "no",
+  "1" = "yes"
+)
+
+lung_cap$Smoke <- as.numeric(as.character(lung_cap$Smoke))
+  
+
+#Poisson regression model
+log_results <- glm(Smoke ~ Age + Gender + Height + LungCap, data = lung_cap, family = "poisson") # The 'family' option allows us to select for a poisson regression model!
+summary_results <- summary(log_results)
+
+#Now, we need to extract and exponentiate the prevalence ratios since they are log-transformed
+#Extracting p values from the poisson regression
+p_values <- coef(summary_results)[,4]%>%
+  round(digits = 4)
+#Extracting coefficients from the poisson regression and turning into odds ratios
+odds <- coef(log_results)%>%
+  exp()%>%
+  round(digits = 4)
+
+#Storing into a dataframe
+results <- data.frame(odds, p_values)
+
+results%>%
+  kable()%>%
+  add_header_above(c("Poisson Regression Model Results for Smoking Status (N = 725)" = 3))%>%
+  kable_paper(bootstrap_options = c("striped","condensed"), font_size = 12, full_width = F)
+```
+
+<table class=" lightable-paper" style='font-size: 12px; font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
+ <thead>
+<tr><th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Poisson Regression Model Results for Smoking Status (N = 725)</div></th></tr>
+  <tr>
+   <th style="text-align:left;">   </th>
+   <th style="text-align:right;"> odds </th>
+   <th style="text-align:right;"> p_values </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> (Intercept) </td>
+   <td style="text-align:right;"> 0.0000 </td>
+   <td style="text-align:right;"> 0.0000 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Age </td>
+   <td style="text-align:right;"> 1.2518 </td>
+   <td style="text-align:right;"> 0.0001 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Gendermale </td>
+   <td style="text-align:right;"> 0.8891 </td>
+   <td style="text-align:right;"> 0.6308 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> Height </td>
+   <td style="text-align:right;"> 1.1484 </td>
+   <td style="text-align:right;"> 0.0009 </td>
+  </tr>
+  <tr>
+   <td style="text-align:left;"> LungCap </td>
+   <td style="text-align:right;"> 0.6219 </td>
+   <td style="text-align:right;"> 0.0000 </td>
+  </tr>
+</tbody>
+</table>
+
+  &nbsp;
+
+
+
+Insert text
+
 
 ***
 # Conclusion
@@ -922,3 +1504,6 @@ In environmental health research, we often want to see the effect of multiple va
 This small training module was meant to introduce you to helpful tools in R to create tables and visualizations, as well as walking through a small bivariate analysis. However, this module only touches the surface of everything R is capable of. There are vast resources available, and it is recommended you check out all of the many resources that have been linked throughout this document!
 
 Have fun! Best of luck!
+
+***
+
