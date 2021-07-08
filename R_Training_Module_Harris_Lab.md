@@ -26,7 +26,7 @@ output:
 
 
 <center>
-![Image credit: Allison Horst](C:/Users/jerem/Desktop/Harris Research/_Lab_Photos_JL/horst_rstudio_air.png)
+![Image credit: Allison Horst](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/horst_rstudio_air.png)
 Image Credit: Allison Horst
 </center>
 
@@ -40,7 +40,7 @@ For this small module, we will be using data from the *Iris* dataset, which is i
   &nbsp;
   
 <center>
-![](C:/Users/jerem/Desktop/Harris Research/_Lab_Photos_JL/iris_sepal_petal.png)
+![](C:/Users/jerem/Desktop/Harris Research/Harris_Lab_R_Resources/files/iris_sepal_petal.png)
 
 </center>
 
@@ -51,8 +51,6 @@ For later analyses in this tutorial, we will switch to using a practice dataset 
   &nbsp;
 
 The code chunk below demonstrates how to load the data and other relevant packages into the environment:
-
-  &nbsp;
   
 
 
@@ -1163,7 +1161,7 @@ Fisher's exact test is similar to Pearson's chi-squared test in that it is a com
 #Uncomment the line above to use the fisher.test() function.
 ```
 
-
+  &nbsp;
 
 ***
 # Regression Models
@@ -1265,7 +1263,7 @@ summary(lm_results)
 ```
   &nbsp;
   
-As we suspected, there is a similar relationship. However, we interpret the results slightly differently. Since smoking was a categorical variable, we now have an instance where a variable was 'dummy' coded with a reference category. This means that the model is comparing those who smoke to a reference category of those who do not smoke.
+As we suspected, there is a similar relationship. However, we interpret the results slightly differently. Since smoking was a categorical variable, we now have an instance where a variable was 'dummy' coded with a reference category. This means that the model is comparing those who smoke to a reference category of those who do not smoke. 'Dummy' primarily comes in handy when you have a categorical variable with 3 or more options.
 
 Our final model now takes the format: Lung Capacity = 7.77 + 0.88 * (Smoker)
 
@@ -1332,7 +1330,7 @@ car::vif(lm_results)
   
 ## Logistic Regression
 
-Not all outcomes of interest will be continuous variables like lung capacity. Often, we will be working with binary outcomes like child mortality or diarrheal prevalence. Logistic regression models are useful in scenarios where an outcome is binary. However, unlike linear regression models, the coefficients of the model are actually log-transformed odds ratios. More information on odds ratios can be found [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/).
+Not all outcomes of interest will be continuous variables like lung capacity. Often, we will be working with binary outcomes like child mortality or diarrheal prevalence. Logistic regression models are useful in scenarios where an outcome is binary. However, unlike linear regression models, the coefficients of the model are actually log-transformed odds ratios. More information on odds ratios can be found [here](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2938757/). We will have the added step of converting them from being log-transformed this time.
 
 In this example, let's explore some of the determinants of smoking. It is important to note that our example dataset is lacking several other important determinants of smoking like wealth and education, so this example (and every other for that matter) should only be used for educational purposes.
 
@@ -1409,14 +1407,13 @@ results%>%
 From the logistic regression model we can see age, height, and lung capacity to be significantly associated with smoking status (P < 0.05). To interpret the odds ratio, if it is > 1 it means there is an increase in odds of being a smoker, whereas if the odds ratio is < 1, it means there is a decrease in odds of being a smoker. So for age, there was an increase in odds between each incremental year old and being a smoker. This positive association is similarly seen with height. However, a decrease in odds was observed with smoking and better lung capacity.
 
 
-
   &nbsp;
   
 ## Poisson Regression
 
   &nbsp;
 
-As explained previously, logistic regression models return odds ratios, however, this can overestimate the prevalence if the outcome is not rare. Poisson regression models are typically used with ordinal count data (1, 2, 3, 4, etc.), but can also be used with binary data (0 or 1). Poisson regressions also return prevalence ratios rather than odds ratios. Further discussion on the use of Poisson versus logistic regression can be found [here](https://doi.org/10.1002/sim.7059).
+As explained previously, logistic regression models return odds ratios, however, this can overestimate the prevalence if the outcome is not rare. Poisson regression models are typically used with ordinal count data (1, 2, 3, 4, etc.), but can also be used with binary data (0 or 1). Poisson regressions also return log-transformed prevalence ratios rather than log-transformed odds ratios. Further discussion on the use of Poisson versus logistic regression can be found [here](https://doi.org/10.1002/sim.7059).
 
 Let's explore the same relationships but using Poisson Regression.
 
@@ -1440,12 +1437,12 @@ summary_results <- summary(log_results)
 p_values <- coef(summary_results)[,4]%>%
   round(digits = 4)
 #Extracting coefficients from the poisson regression and turning into odds ratios
-odds <- coef(log_results)%>%
+prevalence_ratio <- coef(log_results)%>%
   exp()%>%
   round(digits = 4)
 
 #Storing into a dataframe
-results <- data.frame(odds, p_values)
+results <- data.frame(prevalence_ratio, p_values)
 
 results%>%
   kable()%>%
@@ -1458,7 +1455,7 @@ results%>%
 <tr><th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="3"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Poisson Regression Model Results for Smoking Status (N = 725)</div></th></tr>
   <tr>
    <th style="text-align:left;">   </th>
-   <th style="text-align:right;"> odds </th>
+   <th style="text-align:right;"> prevalence_ratio </th>
    <th style="text-align:right;"> p_values </th>
   </tr>
  </thead>
@@ -1493,15 +1490,256 @@ results%>%
 
   &nbsp;
 
+As we can see, the direction of effect remains the same for each predictor in our model, except we now have prevalence ratios rather than odds ratios. In this case, rather than saying there was an 'increase in odds between age and smoking status,' we would say there was an 'increase in risk between age and smoking status.' This small emphasis on odds versus risk has large implications!
 
 
-Insert text
+***
+# Intervention Impact Evaluation
+
+For this next example on how to conduct intervention impact evaluations, I am going to create a hypothetical situation based on our respiratory health dataset. The following paragraph is entirely made up but will set the scene for a hypothetical [randomized-controlled trial](http://dx.doi.org/10.1136/emj.20.2.164) of a public health messaging campaign.
+
+Smoking among young people has increased drastically in North Carolina over the last decade (fictional source). We are interested in the effectiveness of a educational program against smoking and are considering incorporating it into the school curriculum in North Carolina. Young people will participate in the course over 3 days. Students will be enrolled in the study if they are between 12-18 years old and attend one of 3 North Carolina Public Schools chosen for the study. Students will be followed up with at one week and four weeks following the course to understand their smoking habits.
+
+I am now going to manipulate our respiratory health dataset to fit the study. We only want students aged 13-18 years and will be randomly assigning them to a treatment or control group. We will also need to make up what school they are from. 
+
+
+```{.r .code-style}
+# Selecting people only aged 12-18 years
+rct <- lung_cap%>%
+  filter(Age >= 12 & Age <= 18)
+
+#N = 397
+
+
+
+# Enrolling them randomly in a study arm -- 1 for intervention, 0 for control
+# First, getting the number of participants
+N <- nrow(rct)
+# Now assigning to study arms
+# install.packages("randomizr")
+library(randomizr)
+assignment <- complete_ra(N = N, m = 199) # Specifying that we want 199 students in our treatment group
+
+#Attaching study arm assignment to our main rct dataset
+rct <- rct%>%
+  mutate(assignment = assignment)
+
+
+
+# Assigning a North Carolina Public School for each student
+school <- complete_ra(N = N, m_each = c(132, 132, 133), conditions = c("School 1", "School 2", "School 3"))
+
+rct <- rct%>%
+  mutate(school = school)
+```
+  &nbsp;
+  
+Now that we have the study assignments, we are almost ready to do the evaluation. **We are going to assume that our 'rct' dataset contains data collected at the endline (4 week mark) of our study.** The educational program has already happened! We are now interested in seeing if there was a significant effect on our primary outcome of interest, smoking status. 
+
+To do so, we will be creating unadjusted and adjusted models using Poisson regression. In an unadjusted model, we will not be controlling for confounders and will only be comparing smoking status to the study assignment (smoke ~ assignment). In the adjusted model, however, we will be controlling for confounders that are shown to be adequately associated at the P < 0.2 level with our outcome of interest, smoking status. To also be conservative, we will be using robust standard errors that account for clustering at the school level using the [Huber Sandwich Estimator](https://www.stat.berkeley.edu/~census/mlesan.pdf). The process will make more sense as you look at the code, but just remember our overall research question: **What effect does an educational program against smoking have on the smoking habits of 12-18 year olds?**
+
+
+First, let's see if there are any covariates we should be concerned about for our adjusted model. 
+
+
+```{.r .code-style}
+# Rather than manually running a Poisson regression for each covariate of interest, I will develop a function to iterate through each one. 
+
+# Function development
+adjusted_model_covariates <- function(outcome, data, covariate, conf = .2, covariate_list = tibble(covariate = character())){
+  #outcome represents the outcome of interest for the regression model
+  #data is the dataset you will run the regression on
+  #covariate is the list of covariates to iterate through one by one to determine if they meet the P < 0.2 threshhold
+  #covariate_list is a empty dataframe to contain covariates in that meet the threshhold
+  
+  for (i in covariate){
+    df <- data%>%
+      dplyr::select(c(outcome, i))
+    names(df) <- c("outcome", "i")
+    
+    #Running bivariate test
+    regr <- glm(outcome ~ i, data = df, family = "poisson")
+    
+    #Subsetting p values
+    p_values <- coef(summary(regr))[,4]%>%
+      data.frame()
+    
+    p <- p_values[-1,]
+    
+    #determining if p value meets P < 0.2 threshold
+    for (j in 1:length(p)){
+      if(p[j] < 0.2){
+        #if P < 0.2, it stores the covariate name
+        covariate_list <- rbind(covariate_list, i)
+      }
+    }
+  }
+  return(covariate_list)
+}
+
+# End function development
+
+
+# Now, we will select our list of covariates to test for. 
+covariate <- c("LungCap", "Age", "Height", "Gender", "Caesarean")
+# And our outcome of interest
+outcome <- "Smoke"
+
+# Poisson regression needs numeric data type so I convert it here from a factor. 
+rct[[outcome]] <- as.numeric(as.character(rct[[outcome]]))
+
+# Now, we run the function to see if any covariates meet the P < 0.2 threshold
+covariates_results <- adjusted_model_covariates(data = rct, outcome = outcome, covariate = covariate)
+#covariates_results shows the covariates that are beneath this threshold. These covariates are to be included in the adjusted model.
+
+covariates_results
+```
+
+```
+##   X.Age.
+## 1    Age
+```
+  &nbsp;
+  
+As we can see, Age is the only covariate that was below the P < 0.2 threshhold from bivariate testing with Poisson regression. This aligns with what we found in the previous sections, in which age was associated with smoking.
+
+Now, we are ready to evaluate the impact of the intervention! To do so, we will develop our unadjusted model, then our adjusted model while controlling for age (by including it in the model), and then represent the results in a formatted table. The next section presents a lot of code relative to other sections, so bear with me!
+
+
+```{.r .code-style}
+# Package loading
+# install.packages("sandwich")
+library(sandwich)
+
+
+#Running unadjusted model ----
+
+
+#Running unadjusted model
+unadjusted <- glm(Smoke ~ assignment, data = rct, family = "poisson")
+
+#Accounting for clustering using sandwich package
+data_sandwich <- unadjusted%>%
+  vcovCL(cluster = rct$school) #this is where we account for clustering at the school level using the Huber Sandwich estimator (can read more into it)
+
+#Hand calculates the robust standard errors after accounting for clustering
+#There are simpler ways to do this, but this should work too.
+#Important to note that the code below already exponentiates the coefficients and std errors
+std.err <- sqrt(diag(data_sandwich))
+robust_unadjusted <- tibble("pr"= exp(coef(unadjusted)), "Std. Error" = exp(std.err),
+                            "Pr(>|z|)" = 2 * pnorm(abs(coef(unadjusted)/std.err), lower.tail=FALSE),
+                            "LL" = exp((coef(unadjusted)) - 1.96 * (std.err)),
+                            "UL" = exp((coef(unadjusted)) + 1.96 * (std.err)))
+
+#Creating readable 95% CI based on lower limit and upper limit
+robust_unadjusted <- tibble(robust_unadjusted,
+                            CI = paste("[", as.character(round(robust_unadjusted$LL, digits = 3)), ",", as.character(round(robust_unadjusted$UL, digits = 3)), "]"))
+
+
+#Storing values to final results tibble
+unadjusted_pr <- robust_unadjusted$pr[2]
+unadjusted_ci <- robust_unadjusted$CI[2]
+unadjusted_p <- robust_unadjusted$`Pr(>|z|)`[2]
+n <- length(rct$assignment) #number of observations
+
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+#Running adjusted model similar to the unadjusted model above. ----
+
+
+#Running adjusted model based on what we found in previous code chunk
+adjusted <- glm(Smoke ~ assignment + Age, data = rct, family = "poisson") #This will change based on your outcome of interest and whatever covariates are at P <0.2 
+
+data_sandwich <- adjusted%>%
+  vcovCL(cluster = rct$school) #Again, accounting for clustering at the village level
+
+#Hand calculation again
+#Important to note that the code below already exponentiates the coefficients and std errors
+std.err <- sqrt(diag(data_sandwich))
+robust_adjusted <- tibble("pr"= exp(coef(adjusted)), "Std. Error" = exp(std.err),
+                          "Pr(>|z|)" = 2 * pnorm(abs(coef(adjusted)/std.err), lower.tail=FALSE),
+                          "LL" = exp(coef(adjusted) - 1.96 * (std.err)),
+                          "UL" = exp(coef(adjusted) + 1.96 * (std.err)))
+
+#Creating readable 95% CI based on LL and UL
+robust_adjusted <- tibble(robust_adjusted,
+                          CI = paste("[", as.character(round(robust_adjusted$LL, digits = 3)), ",", as.character(round(robust_adjusted$UL, digits = 3)), "]"))
+
+
+#Storing values to final results tibble
+adjusted_pr <- robust_adjusted$pr[2]
+adjusted_ci <- robust_adjusted$CI[2]
+adjusted_p <- robust_adjusted$`Pr(>|z|)`[2]
+
+
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+# storing results in a nice format ----
+outcome_result <- tibble(outcome = outcome,
+                         unadjusted_pr = unadjusted_pr,
+                         unadjusted_ci = unadjusted_ci,
+                         unadjusted_p = unadjusted_p,
+                         adjusted_pr = adjusted_pr,
+                         adjusted_ci = adjusted_ci,
+                         adjusted_p = adjusted_p,
+                         n = n
+                         )
+
+
+outcome_result%>%
+  kable()%>%
+  add_header_above(c("Intervention Impact Evaluation (N = 397)" = 8))%>%
+  kable_paper(bootstrap_options = c("striped","condensed"), font_size = 12, full_width = F)
+```
+
+<table class=" lightable-paper" style='font-size: 12px; font-family: "Arial Narrow", arial, helvetica, sans-serif; width: auto !important; margin-left: auto; margin-right: auto;'>
+ <thead>
+<tr><th style="border-bottom:hidden;padding-bottom:0; padding-left:3px;padding-right:3px;text-align: center; " colspan="8"><div style="border-bottom: 1px solid #ddd; padding-bottom: 5px; ">Intervention Impact Evaluation (N = 397)</div></th></tr>
+  <tr>
+   <th style="text-align:left;"> outcome </th>
+   <th style="text-align:right;"> unadjusted_pr </th>
+   <th style="text-align:left;"> unadjusted_ci </th>
+   <th style="text-align:right;"> unadjusted_p </th>
+   <th style="text-align:right;"> adjusted_pr </th>
+   <th style="text-align:left;"> adjusted_ci </th>
+   <th style="text-align:right;"> adjusted_p </th>
+   <th style="text-align:right;"> n </th>
+  </tr>
+ </thead>
+<tbody>
+  <tr>
+   <td style="text-align:left;"> Smoke </td>
+   <td style="text-align:right;"> 1.243719 </td>
+   <td style="text-align:left;"> [ 0.946 , 1.634 ] </td>
+   <td style="text-align:right;"> 0.1175319 </td>
+   <td style="text-align:right;"> 1.182234 </td>
+   <td style="text-align:left;"> [ 0.833 , 1.678 ] </td>
+   <td style="text-align:right;"> 0.3484099 </td>
+   <td style="text-align:right;"> 397 </td>
+  </tr>
+</tbody>
+</table>
+
+  &nbsp;
+  
+Now that we have our final results for the intervention impact evaluation in a formatted table, what do they mean?
+
+Presented in the table are the unadjusted and adjusted prevalence ratios, the 95% confidence intervals based on robust standard errors, and the number (n) of study participants.
+
+Primarily, since P > 0.05, we can conclude that our educational program against smoking did not have any influence on the smoking habits of the study participants (This is to be expected since the study arm assignments were randomly assigned to fictional data). 
+
+Finally, congrats! You just evaluated the impact of a fictional randomized-controlled trial and now know how to do so for future ones in R!
 
 
 ***
 # Conclusion
 
-This small training module was meant to introduce you to helpful tools in R to create tables and visualizations, as well as walking through a small bivariate analysis. However, this module only touches the surface of everything R is capable of. There are vast resources available, and it is recommended you check out all of the many resources that have been linked throughout this document!
+This training module was meant to introduce you to helpful tools in R to create tables and visualizations, as well as walking through a bivariate data analyses and regression models. This module only touches the surface of everything R is capable of! There are vast resources available, and it is recommended you check out all of the many resources that have been linked throughout this document!
 
 Have fun! Best of luck!
 
