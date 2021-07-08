@@ -1,6 +1,6 @@
 name: "jlowe-git"
 output_dir: "."
-href: R_Training_Module_Harris_Lab.html
+
 
 output:
   html_document:
